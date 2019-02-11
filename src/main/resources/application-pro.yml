@@ -1,0 +1,9 @@
+upload:
+  tempPath: /data/exam/temp
+  savePath: /data/exam/save
+  expireTime: 3 #图片过期时间 单位天
+
+server:
+  tomcat:
+    basedir: /data/exam/apps/temp
+
