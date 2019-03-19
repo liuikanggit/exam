@@ -1,6 +1,5 @@
 package com.heo.exam.aspect;
 
-import com.heo.exam.constant.RedisConstant;
 import com.heo.exam.enums.ResultEnum;
 import com.heo.exam.enums.UserTypeEnum;
 import com.heo.exam.exception.ExamException;
@@ -34,9 +33,6 @@ public class AuthAspect {
     private RedisService redisService;
 
     @Autowired
-    private RedisTemplate redisTemplate;
-
-    @Autowired
     private UserRepository userRepository;
 
     /**
@@ -46,7 +42,7 @@ public class AuthAspect {
     public void verifyStudent() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        tokenVerify(request);
+        tokenVerify();
         authVerify(request, UserTypeEnum.STUDENT);
         collectionFormId(request);
     }
@@ -58,58 +54,52 @@ public class AuthAspect {
     public void verifyTeacher() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        tokenVerify(request);
+        tokenVerify();
         authVerify(request, UserTypeEnum.TEACHER);
         collectionFormId(request);
     }
 
+    /**
+     * 上传图片也要验证token
+     */
     @Before("execution(public * com.heo.exam.controller.UploadController.*(..))")
     public void verifyUpload(){
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        tokenVerify(request);
+        tokenVerify();
         collectionFormId(request);
     }
 
     private void authVerify(HttpServletRequest request, UserTypeEnum userTypeEnum) {
 
         String userId = (String) request.getAttribute("userId");
-        if (!userRepository.existsByIdAndType(userId, userTypeEnum.getTypeCode())) {
+        if (!userRepository.existsByIdAndType(userId, userTypeEnum.getCode())) {
             throw new ExamException(ResultEnum.NO_AUTH);
         }
     }
 
-    private void tokenVerify(HttpServletRequest request) {
+    /**
+     * 验证token
+     */
+    private void tokenVerify() {
 
-        /** 从请求头中获取token */
-        String token = request.getHeader(RedisConstant.AUTHORIZATION);
-
-        if (Strings.isEmpty(token)) {
-            log.warn("【登录校验】token不存在");
-            throw new ExamException(ResultEnum.LOGIN_INVALID);
-        }
         /** 验证token是否有效 */
-        if (!redisService.verify(token)) {
+        if (!redisService.verify()) {
             throw new ExamException(ResultEnum.LOGIN_INVALID);
         }
     }
 
+    /**
+     * 采集用户的formId
+     * @param request
+     */
     private void collectionFormId(HttpServletRequest request) {
-        /** 采集小程序的formId */
         String[] formIdList = request.getParameterValues("formId");
-        if (!Objects.isNull(formIdList) && formIdList.length > 0) {
+        if (!Objects.isNull(formIdList) && formIdList.length > 0 && !formIdList[0].equals("[]")) {
             String userId = (String) request.getAttribute("userId");
-            String key = StringFormatter.format("formId_%s", userId).toString();
             log.info("formId:{} length:{}", formIdList, formIdList.length);
             for (String formId : formIdList) {
-                if (Strings.isNotEmpty(formId)) {
-                    /** 把formId存入以formId_+id为key的redis中 */
-                    try {
-                        redisTemplate.opsForList().leftPush(key, formId);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+                   redisService.saveFormId(userId,formId);
             }
         }
     }

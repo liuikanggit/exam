@@ -2,8 +2,8 @@ package com.heo.exam.form;
 
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -25,8 +25,9 @@ public class ClassInfoForm {
     @Size(max = 16,message = "密码太长了")
     private String password;
 
-    @Size(max = 16,message = "年级字段过长")
-    private String grade;
+    @Max(value = 16,message = "年级不合法")
+    @Min(value = 1,message = "年级不合法")
+    private Integer grade;
 
     @Size(max = 256,message = "描述过长了")
     private String desc;

@@ -6,12 +6,16 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author 刘康
  * @create 2019-01-31 14:28
  * @desc 用户dao
  **/
+@Repository
 public interface UserRepository extends CrudRepository<User,String> {
 
     @Query("select id from User where openid = ?1 and type = ?2")
@@ -29,5 +33,7 @@ public interface UserRepository extends CrudRepository<User,String> {
 
     @Query("select u.name from User u where id = ?1")
     String getNameById(String id);
+
+    List<User> getUsersByIdInOrderByTypeDesc(List<String> ids);
 
 }

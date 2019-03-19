@@ -11,6 +11,26 @@ public interface RedisService{
 
     void logout();
 
-    boolean verify(String token);
+    boolean verify();
+
+    /**
+     * 保存formId
+     * @param userId
+     * @param formId
+     */
+    void saveFormId(String userId,String formId);
+
+    /**
+     * 获取formId
+     * @param userId
+     * @return
+     */
+    String getFormId(String userId);
+
+    /**
+     * 获取accessToken
+     * @return
+     */
+    String getAccessToken();
 
 }

@@ -19,76 +19,87 @@ import javax.validation.Valid;
  **/
 @RestController
 @RequestMapping("/t")
-public class TeacherController extends BaseController{
+public class TeacherController extends BaseController {
 
     @Autowired
     private ClassService classService;
 
     /**
      * 查看自己的资料
+     *
      * @return
      */
     @GetMapping("/info")
-    public ResultVO getUserInfo(){
+    public ResultVO getUserInfo() {
         return userService.getUserInfo(getUserId());
     }
 
     /**
      * 查看其他用户的资料
+     *
      * @param id 用户id
      * @return
      */
     @GetMapping("/info/{id}")
-    public ResultVO getUserInfo(@PathVariable String id){
+    public ResultVO getUserInfo(@PathVariable String id) {
         return userService.getUserInfo(id);
     }
 
     /**
      * 修改资料
+     *
      * @param userInfoForm
      * @param bindingResult
      * @return
      */
-    @PostMapping("/info")
-    public ResultVO updateUserInfo(@Valid UserInfoForm userInfoForm, BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
-            return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
+    @PutMapping("/info")
+    public ResultVO updateUserInfo(@Valid UserInfoForm userInfoForm, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResultVOUtil.error(1, bindingResult.getFieldError().getDefaultMessage());
         }
-        return userService.updateUserInfo(getUserId(),userInfoForm);
-    }
-
-    /**
-     * 查看班级信息
-     * @param classId
-     * @return
-     */
-    @GetMapping("/class")
-    public ResultVO getClassInfo(@RequestParam String classId){
-        return classService.getClassInfo(getUserId(),classId);
-    }
-
-    /**
-     * 加入班级
-     * @param classId
-     * @return
-     */
-    @PostMapping("/join/class")
-    public ResultVO joinClass(@RequestParam String classId){
-        return classService.joinClass(getUserId(), UserTypeEnum.STUDENT,classId);
+        return userService.updateUserInfo(getUserId(), userInfoForm);
     }
 
     /**
      * 创建班级
+     *
      * @param classInfoForm
      * @param bindingResult
      * @return
      */
-    @PostMapping("/create/class")
-    public ResultVO createClass(@Valid ClassInfoForm classInfoForm,BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
-            return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
+    @PostMapping("/class")
+    public ResultVO createClass(@Valid ClassInfoForm classInfoForm, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResultVOUtil.error(1, bindingResult.getFieldError().getDefaultMessage());
         }
-        return classService.createClass(getUserId(),classInfoForm);
+        return classService.createClass(getUserId(), classInfoForm);
+    }
+
+    /**
+     * 搜索班级信息
+     *
+     * @param classId
+     * @return
+     */
+    @GetMapping("/class/{classId}")
+    public ResultVO getClassInfo(@PathVariable String classId) {
+        return classService.getClassInfo(getUserId(), classId);
+    }
+
+    /**
+     * 加入班级
+     *
+     * @param classId
+     * @return
+     */
+    @PostMapping("/join/class")
+    public ResultVO joinClass(@RequestParam String classId) {
+        return classService.joinClass(getUserId(), UserTypeEnum.STUDENT, classId);
+    }
+
+    @DeleteMapping("/exit/class")
+    public ResultVO exitClass(@RequestParam String classId){
+        return classService.quitClass(getUserId(), classId);
     }
 
 

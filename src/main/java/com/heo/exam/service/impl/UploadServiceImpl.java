@@ -33,7 +33,6 @@ public class UploadServiceImpl implements UploadService {
     @Autowired
     private UploadConfig uploadConfig;
 
-
     @Override
     public ResultVO uploadFile(MultipartFile file, int fileType) {
         if (file.isEmpty()) {
@@ -71,20 +70,24 @@ public class UploadServiceImpl implements UploadService {
 
     @Override
     public boolean saveFile(String imageName) {
-        Path path = Paths.get(uploadConfig.getTempPath(), imageName);
-        if (Files.exists(path)) {
-            try {
-                Files.move(path, Paths.get(uploadConfig.getSavePath(), imageName), StandardCopyOption.ATOMIC_MOVE);
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new ExamException(ResultEnum.FILE_SAVE_ERROR);
+        if (Strings.isNotEmpty(imageName) && !imageName.matches("^http.*")) {
+            Path path = Paths.get(uploadConfig.getTempPath(), imageName);
+            if (Files.exists(path)) {
+                try {
+                    Files.move(path, Paths.get(uploadConfig.getSavePath(), imageName), StandardCopyOption.ATOMIC_MOVE);
+                    return true;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    throw new ExamException(ResultEnum.FILE_SAVE_ERROR);
+                }
+            } else if (Files.exists(Paths.get(uploadConfig.getSavePath(), imageName))) {
+                /** 文件已经保存过了 */
+                return false;
+            } else {
+                throw new ExamException(ResultEnum.FILE_NOT_EXISTS);
             }
-        } else if (Files.exists(Paths.get(uploadConfig.getSavePath(), imageName))) {
-            /** 文件已经保存过了 */
-            return false;
         } else {
-            throw new ExamException(ResultEnum.FILE_NOT_EXISTS);
+            return false;
         }
     }
 

@@ -18,15 +18,15 @@ public class Clazz {
     @Id
     private String id;
 
-    private String createId;
+    private String creatorId;
 
     private String name;
 
-    private String avatar = "";
+    private String avatar;
 
     private String password = "";
 
-    private String grade = "";
+    private Integer grade = 0;
 
     @Column(name = "class_desc")
     private String desc;

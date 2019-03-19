@@ -16,19 +16,19 @@ public interface ClassService {
     /**
      * 查看班级信息
      *
-     * @param userId 用户id 用来判断是否是创建者
+     * @param userId  用户id 用来判断是否是创建者
      * @param classId 班级id
      * @return 班级信息
      */
-    ResultVO getClassInfo(String userId,String classId);
+    ResultVO getClassInfo(String userId, String classId);
 
     /**
-     * 查看班级里的其他用户(学生和老师)
+     * 查看班级里的所有用户(学生和老师)
      *
      * @param classId
      * @return
      */
-    ResultVO getUserListInClass(String classId);
+    ResultVO getUserListInClass(String userId,String classId);
 
     /**
      * 加入班级
@@ -50,9 +50,12 @@ public interface ClassService {
 
     /**
      * 创建班级
-     * @param userId 创建者id
+     *
+     * @param userId        创建者id
      * @param classInfoForm 班级信息
      * @return
      */
     ResultVO createClass(String userId, ClassInfoForm classInfoForm);
+
+    ResultVO getAllJoinedClassInfo(String userId, int page, int size);
 }

@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 public class UserInfoForm {
 
     @NotNull(message = "名称未填写")
-    @Max(value = 32,message = "名称过长")
+    @Size(max = 32,message = "名称过长")
     public String name;
 
     @Size(max = 20,message = "联系方式过长")

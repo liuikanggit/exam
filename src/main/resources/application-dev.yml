@@ -1,6 +1,12 @@
 upload:
-  tempPath: G:\\exam\\temp
-  savePath: G:\\exam\\save
+  tempPath: E:\data\exam\temp
+  savePath: E:\data\exam\save
   expireTime: 1 #图片过期时间 单位天
 
-backDoorCode: 84V9gzlNTxrYXjAm7123lkJisk2chAsG6mBp2dm90ex12
+system:
+  tempPath: E:\data\exam\system\tempPath
+
+
+backDoorCode: 84V9gzlNTx
+server:
+  port: 8082

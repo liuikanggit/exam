@@ -3,10 +3,7 @@ package com.heo.exam.entity;
 import com.heo.exam.enums.UserTypeEnum;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -14,7 +11,8 @@ import java.util.Date;
  * @create 2019-02-01 13:43
  * @desc 学生对应班级对应表
  **/
-@Entity(name = "user2class")
+@Entity
+@Table(name = "user2class")
 @Data
 public class User2Class {
 
@@ -36,7 +34,7 @@ public class User2Class {
 
     public User2Class(String userId, UserTypeEnum userTypeEnum, String classId){
         this.userId = userId;
-        this.userType = userTypeEnum.getTypeCode();
+        this.userType = userTypeEnum.getCode();
         this.classId = classId;
     }
 }

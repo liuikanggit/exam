@@ -1,24 +1,23 @@
 package com.heo.exam.enums;
 
-
 import lombok.Getter;
 
 /**
  * @author 刘康
- * @create 2019-01-31 13:47
- * @desc 性别枚举
+ * @create 2019-02-19 14:12
+ * @desc 题目类型
  **/
-public enum  SexEnum implements EnumCommon {
+public enum  QuestionTypeEnum implements EnumCommon {
 
-    UNKNOWN(-1,"未填写"),
-    MALE(0,"男"),
-    FEMALE(1,"女");
+    CHOICE_QUESTION(0,"选择题"),
+    JUDGE_QUESTION(1,"判断题"),
+    VACANCY_QUESTION(2,"填空题"),
+    ;
 
     private Integer code;
-
     private String name;
 
-    SexEnum(Integer code,String name){
+    QuestionTypeEnum(Integer code,String name){
         this.code = code;
         this.name = name;
     }

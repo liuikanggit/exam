@@ -1,4 +1,4 @@
-package com.heo.exam.Scheduler;
+package com.heo.exam.scheduler;
 
 import com.heo.exam.service.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepository.updateUserInfo(userId, userInfoForm);
-        return ResultVOUtil.success();
+        return getUserInfo(userId);
     }
 
 }

@@ -13,6 +13,4 @@ public interface AdminService {
 
     ResultVO logout();
 
-    ResultVO verify(String token);
-
 }

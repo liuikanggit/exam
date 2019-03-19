@@ -26,8 +26,11 @@ public class WechatLoginController {
      * @return
      */
     @PostMapping("/login")
-    public ResultVO login(@RequestParam String code,@RequestParam Integer type){
-        return wechatLoginService.loginOrRegister(code,type);
+    public ResultVO login(@RequestParam String code,@RequestParam Integer type,
+                          @RequestParam(required = false) String[] formId,
+                          @RequestParam String nickName,@RequestParam String avatarUrl,
+                          @RequestParam String gender){
+        return wechatLoginService.loginOrRegister(code,type,formId,nickName,avatarUrl,gender);
     }
 
 }

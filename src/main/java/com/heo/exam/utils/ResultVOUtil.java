@@ -1,6 +1,7 @@
 package com.heo.exam.utils;
 
 import com.heo.exam.enums.ResultEnum;
+import com.heo.exam.vo.ErrorDetail;
 import com.heo.exam.vo.ResultVO;
 
 /**
@@ -23,9 +24,14 @@ public class ResultVOUtil {
     }
 
     public static ResultVO error(Integer code, String msg) {
+        return error(code,msg,null);
+    }
+
+    public static ResultVO error(Integer code, String msg, Object errorDetail) {
         ResultVO resultVO = new ResultVO();
         resultVO.setCode(code);
         resultVO.setMsg(msg);
+        resultVO.setData(errorDetail);
         return resultVO;
     }
 

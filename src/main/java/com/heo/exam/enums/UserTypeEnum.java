@@ -7,38 +7,28 @@ import lombok.Getter;
  * @create 2019-01-31 13:38
  * @desc 用户类型枚举
  **/
-@Getter
-public enum UserTypeEnum {
+public enum UserTypeEnum implements EnumCommon {
 
     STUDENT(0,"学生"),
     TEACHER(1,"教师"),
-    ADMIN(2,"系统管理员");
+    ADMIN(2,"系统管理员"),
+    ;
 
-    private Integer typeCode;
+    private Integer code;
 
-    private String typeName;
+    private String name;
 
-    UserTypeEnum(Integer typeCode,String typeName){
-        this.typeCode = typeCode;
-        this.typeName = typeName;
+    UserTypeEnum(Integer code,String name){
+        this.code = code;
+        this.name = name;
     }
 
-    public static boolean contains(Integer typeCode){
-        for (UserTypeEnum userTypeEnum : UserTypeEnum.values()) {
-            if(userTypeEnum.getTypeCode().equals(typeCode)){
-                return true;
-            }
-        }
-        return false;
+    @Override
+    public Integer getCode() {
+        return code;
     }
 
-    public static String getTypeName(Integer typeCode){
-        for (UserTypeEnum userTypeEnum : UserTypeEnum.values()) {
-            if(userTypeEnum.getTypeCode().equals(typeCode)){
-                return userTypeEnum.getTypeName();
-            }
-        }
-        return "";
-    }
-
-}
+    @Override
+    public String getName() {
+        return name;
+    }}

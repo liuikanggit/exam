@@ -28,7 +28,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ResultVO login(String username, String password) {
-        Integer type = UserTypeEnum.ADMIN.getTypeCode();
+        Integer type = UserTypeEnum.ADMIN.getCode();
         User admin = userRepository.findByUsernameAndType(username,type);
         if(admin == null){
             throw new ExamException(ResultEnum.ADMIN_EMPTY);
@@ -49,8 +49,4 @@ public class AdminServiceImpl implements AdminService {
         return ResultVOUtil.success();
     }
 
-    @Override
-    public ResultVO verify(String token) {
-        return null;
-    }
 }
