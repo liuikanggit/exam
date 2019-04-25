@@ -37,11 +37,10 @@ public class MessageParam {
     }
 
     public MessageParam addData(String value){
-        addData(i++,value);
-        return this;
+        return addData(i++,value);
     }
 
-    public MessageParam addData(Integer i,String value){
+    private MessageParam addData(Integer i,String value){
         Map<String,String> valueMap = new HashMap<>();
         valueMap.put("value",value);
         this.data.put("keyword"+i,valueMap);
@@ -60,27 +59,3 @@ public class MessageParam {
     }
 }
 
-
-/**
- {
- "touser": "OPENID",
- "template_id": "TEMPLATE_ID",
- "page": "index",
- "form_id": "FORMID",
- "data": {
- "keyword1": {
- "value": "339208499"
- },
- "keyword2": {
- "value": "2015年01月05日 12:30"
- },
- "keyword3": {
- "value": "粤海喜来登酒店"
- } ,
- "keyword4": {
- "value": "广州市天河区天河路208号"
- }
- },
- "emphasis_keyword": "keyword1.DATA"
- }
- */

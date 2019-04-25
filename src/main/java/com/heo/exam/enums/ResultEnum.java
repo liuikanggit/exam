@@ -9,8 +9,10 @@ public enum ResultEnum {
     PARAM_ERROR(1, "参数不正确"),
 
     STUDENT_EMPTY(100, "学生不存在"),
-
+    LIKE_EXCEED_10(101,"每天最多给别人点赞10个"),
+    LIKE_EXCEED_5(102,"每天最多给自己点赞5个"),
     TEACHER_EMPTY(200, "教师不存在"),
+    USER_EMPTY(201,"用户不存在"),
 
     CLASS_EMPTY(300, "班级不存在"),
     REPEAT_THE_CLASS(301, "重复加入班级"),
@@ -27,6 +29,11 @@ public enum ResultEnum {
     ADMIN_EMPTY(601, "管理员用户不存在"),
     ADMIN_PASSWORD_ERROR(602, "管理员登录密码错误"),
 
+    SUBJECT_NOT_EXIST(701,"科目不存在"),
+    PAPER_NOT_EXIST(702,"试卷不存在"),
+    EXAM_NOT_EXIST(703,"考试不存在"),
+    EXAM_NOT_START(704,"考试未开始"),
+    EXAM_IS_END(704,"考试以截止"),
 
     SYSTEM_EXCEPTION(-1, "系统异常"),
     REQUEST_EXCEPTION(-2, "请求异常"),
@@ -35,6 +42,8 @@ public enum ResultEnum {
 
     MISSING_PARAMETERS(-100, "请求缺少参数"),
     METHOD_NOT_SUPPORTED(-101, "请求方法不支持"),
+
+    QUERY_TIMEOUT(-102, "redis查询超时"),
 
     INVALID_CODE(40029, "code无效");
 

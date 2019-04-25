@@ -26,6 +26,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -244,9 +245,9 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public synchronized File getExcelTemplate() {
         try {
-            File file = ResourceUtils.getFile("classpath:input.xlsx");
-
+            ClassPathResource resource = new ClassPathResource("input.xlsx");
             Path path = Paths.get(systemTempPath,"input.xlsx");
+
             if (!Files.deleteIfExists(path)){
                 Files.createDirectories(path);
                 Set<PosixFilePermission> permissionSet = new HashSet<>();
@@ -255,7 +256,7 @@ public class QuestionServiceImpl implements QuestionService {
                 Files.setPosixFilePermissions(path,permissionSet);
             }
 
-            Workbook wb = new XSSFWorkbook(new FileInputStream(file));
+            Workbook wb = new XSSFWorkbook(resource.getInputStream());
 
             String password = UUID.randomUUID().toString();
             /** 第二个sheet，放科目*/

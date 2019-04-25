@@ -18,6 +18,5 @@ public class WechatServiceImplTest {
 
     @Test
     public void loginOrRegister() {
-        wechatService.loginOrRegister("1",1);
     }
 }

@@ -1,8 +1,12 @@
 package com.heo.exam.controller;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.heo.exam.enums.UserTypeEnum;
+import com.heo.exam.form.Answer;
 import com.heo.exam.form.UserInfoForm;
 import com.heo.exam.service.ClassService;
+import com.heo.exam.service.ExamService;
 import com.heo.exam.utils.ResultVOUtil;
 import com.heo.exam.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +14,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author 刘康
@@ -22,6 +29,9 @@ public class StudentController extends BaseController {
 
     @Autowired
     private ClassService classService;
+
+    @Autowired
+    private ExamService examService;
 
     /**
      * 查看自己的资料
@@ -70,16 +80,16 @@ public class StudentController extends BaseController {
         return classService.getClassInfo(getUserId(), classId);
     }
 
-
     /**
      * 获取自己加入的所有班级信息
+     *
      * @param page
      * @param size
      * @return
      */
     @GetMapping("/class")
-    public ResultVO getAllClass(@RequestParam(required = false,defaultValue = "0") int page,
-                                @RequestParam(required = false,defaultValue = "50") int size) {
+    public ResultVO getAllClass(@RequestParam(required = false, defaultValue = "0") int page,
+                                @RequestParam(required = false, defaultValue = "50") int size) {
         return classService.getAllJoinedClassInfo(getUserId(), page, size);
     }
 
@@ -90,8 +100,8 @@ public class StudentController extends BaseController {
      * @return
      */
     @PostMapping("/join/class")
-    public ResultVO joinClass(@RequestParam String classId) {
-        return classService.joinClass(getUserId(), UserTypeEnum.STUDENT, classId);
+    public ResultVO joinClass(@RequestParam String classId,@RequestParam(required = false,defaultValue = "") String password) {
+        return classService.joinClass(getUserId(), UserTypeEnum.STUDENT, classId,password);
     }
 
     /**
@@ -106,15 +116,71 @@ public class StudentController extends BaseController {
     }
 
     /**
-     * 获取班级中所有同学
+     * 获取班级信息和成员
      *
      * @param classId
      * @return
      */
     @GetMapping("/class/user")
     public ResultVO getUserListInClass(@RequestParam String classId) {
-        return classService.getUserListInClass(getUserId(),classId);
+        return classService.getClassAndUserList(getUserId(), classId);
     }
 
+    /**
+     * 给用户点赞
+     * @param userId
+     * @return
+     */
+    @PostMapping("/like")
+    public ResultVO likeUser(@RequestParam String userId) {
+        return userService.like(getUserId(), userId);
+    }
+
+    /**
+     * 获取自己等待的考试
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping("/exam")
+    public ResultVO getExam(@RequestParam(required = false,defaultValue = "false") boolean end,
+                            @RequestParam(required = false,defaultValue = "0") Integer page,
+                            @RequestParam(required = false,defaultValue = "50") Integer size){
+        if (end){
+            return examService.getEndExamSimpleInfoByStudent(getUserId(),page,size);
+        }
+        return examService.getExamSimpleInfoByStudent(getUserId(),page,size);
+    }
+
+    /**
+     * 获取考试的详细信息
+     * @param id
+     * @return
+     */
+    @GetMapping("/exam/{id}")
+    public ResultVO getExamDetail(@PathVariable Integer id){
+        return examService.getExamDetailInfoByStudent(getUserId(),id);
+    }
+
+    /**
+     * 开始考试或继续考试
+     * @param id
+     * @return
+     */
+    @GetMapping("/start/exam/{id}")
+    public ResultVO startExam(@PathVariable Integer id){
+        return examService.startExam(getUserId(),id);
+    }
+
+    @PostMapping("/save/exam")
+    public ResultVO saveExam(@RequestParam Integer id, @RequestParam String answer){
+        Map<String,String> answerMap = new Gson().fromJson(answer,new TypeToken<Map<Integer,String>>(){}.getType() );
+        return examService.saveExam(getUserId(),id,answerMap);
+    }
+
+    @PostMapping("/submit/exam")
+    public ResultVO submitExam(@RequestParam Integer id){
+        return examService.submitExam(getUserId(),id);
+    }
 
 }

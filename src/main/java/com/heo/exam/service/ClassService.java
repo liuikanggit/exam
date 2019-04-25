@@ -28,7 +28,7 @@ public interface ClassService {
      * @param classId
      * @return
      */
-    ResultVO getUserListInClass(String userId,String classId);
+    ResultVO getClassAndUserList(String userId,String classId);
 
     /**
      * 加入班级
@@ -37,7 +37,7 @@ public interface ClassService {
      * @param classId 班级id
      * @return 成功or失败
      */
-    ResultVO joinClass(String userId, UserTypeEnum userTypeEnum, String classId);
+    ResultVO joinClass(String userId, UserTypeEnum userTypeEnum, String classId,String password);
 
     /**
      * 退出班级
@@ -57,5 +57,29 @@ public interface ClassService {
      */
     ResultVO createClass(String userId, ClassInfoForm classInfoForm);
 
+    /**
+     * 获取自己加入的班级简要信息 分页
+     * @param userId
+     * @param page
+     * @param size
+     * @return
+     */
     ResultVO getAllJoinedClassInfo(String userId, int page, int size);
+
+    /**
+     * 踢出用户
+     * @param userId 教师iid
+     * @param classId 班级id
+     * @param userId1 用户id
+     * @return
+     */
+    ResultVO outUser(String userId, String classId, String userId1);
+
+    /**
+     * 解散班级
+     * @param teacherId 教师id
+     * @param classId 班级id
+     * @return
+     */
+    ResultVO disbandClass(String teacherId, String classId);
 }

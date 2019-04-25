@@ -1,8 +1,6 @@
 package com.heo.exam.enums;
 
 
-import lombok.Getter;
-
 /**
  * @author 刘康
  * @create 2019-01-31 13:47
@@ -10,9 +8,9 @@ import lombok.Getter;
  **/
 public enum  SexEnum implements EnumCommon {
 
-    UNKNOWN(-1,"未填写"),
-    MALE(0,"男"),
-    FEMALE(1,"女");
+    UNKNOWN(0,"未填写"),
+    MALE(1,"男"),
+    FEMALE(2,"女");
 
     private Integer code;
 

@@ -1,6 +1,7 @@
 package com.heo.exam.repository;
 
 import com.heo.exam.entity.Clazz;
+import com.heo.exam.vo.ClassAndUserInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.Query;
@@ -26,5 +27,7 @@ public interface ClassRepository extends CrudRepository<Clazz, String> {
     boolean existsByNameAndCreatorId(String name,String userId);
 
     boolean existsByIdAndCreatorId(String id,String userId);
+
+    boolean existsByIdAndPassword(String id,String password);
 
 }

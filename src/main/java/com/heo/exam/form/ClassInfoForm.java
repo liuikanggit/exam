@@ -2,10 +2,7 @@ package com.heo.exam.form;
 
 import lombok.Data;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 /**
  * @author 刘康
@@ -16,7 +13,7 @@ import javax.validation.constraints.Size;
 public class ClassInfoForm {
 
     @Size(max = 32,message = "名称过长")
-    @NotNull(message = "名称未填写")
+    @NotEmpty(message = "名称未填写")
     private String name;
 
     @Size(max = 256,message = "图片url过长")
@@ -26,7 +23,7 @@ public class ClassInfoForm {
     private String password;
 
     @Max(value = 16,message = "年级不合法")
-    @Min(value = 1,message = "年级不合法")
+    @Min(value = 0,message = "年级不合法")
     private Integer grade;
 
     @Size(max = 256,message = "描述过长了")

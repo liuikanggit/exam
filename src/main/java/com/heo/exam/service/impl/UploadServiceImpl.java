@@ -84,6 +84,7 @@ public class UploadServiceImpl implements UploadService {
                 /** 文件已经保存过了 */
                 return false;
             } else {
+                log.error("图片不存在:{}", uploadConfig.getTempPath() + "/" + imageName);
                 throw new ExamException(ResultEnum.FILE_NOT_EXISTS);
             }
         } else {

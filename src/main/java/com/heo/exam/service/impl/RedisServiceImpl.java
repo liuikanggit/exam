@@ -40,13 +40,11 @@ public class RedisServiceImpl implements RedisService {
     public String login(String userId) {
         /** 判断用户的token是否已经存在了 */
         String token = redisTemplate.opsForValue().get(userId);
-        if (token != null) {
-            /** 表明用户之前已经登录过一次了.清除之前的登录状态 */
-            redisTemplate.opsForValue().getOperations().delete(String.format(RedisConstant.TOKEN_PREFIX, token));
-        }
-        /** 生成token  */
-        token = UUID.randomUUID().toString();
 
+        if (token  == null) {
+            /** 生成token  */
+            token = UUID.randomUUID().toString();
+        }
         // 保存token
         saveToken(userId, token);
         return token;
@@ -91,8 +89,8 @@ public class RedisServiceImpl implements RedisService {
     }
 
     private void saveToken(String userId, String token) {
-        /** 把用户id  作为key，token作为value */
-        redisTemplate.opsForValue().set(userId, token, RedisConstant.EXPIRE, TimeUnit.SECONDS);
+//        /** 把用户id  作为key，token作为value */
+//        redisTemplate.opsForValue().set(userId, token, RedisConstant.EXPIRE, TimeUnit.SECONDS);
 
         /** 再把token_{token}作为key，用户id 作为value */
         redisTemplate.opsForValue().set(String.format(RedisConstant.TOKEN_PREFIX, token), userId, RedisConstant.EXPIRE, TimeUnit.SECONDS);

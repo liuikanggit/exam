@@ -12,4 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface QuestionRepository extends CrudRepository<Question,Integer> {
     boolean existsQuestionByTitle(String title);
+
+    boolean existsByIdAndAnswer0(Integer question,String answer);
 }

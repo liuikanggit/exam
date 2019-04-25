@@ -1,7 +1,6 @@
 package com.heo.exam.service.impl;
 
 import com.heo.exam.entity.Clazz;
-import com.heo.exam.entity.User;
 import com.heo.exam.entity.User2Class;
 import com.heo.exam.enums.ResultEnum;
 import com.heo.exam.enums.UserTypeEnum;
@@ -14,10 +13,7 @@ import com.heo.exam.service.ClassService;
 import com.heo.exam.service.UploadService;
 import com.heo.exam.utils.KeyUtil;
 import com.heo.exam.utils.ResultVOUtil;
-import com.heo.exam.vo.ClassInfoVO;
-import com.heo.exam.vo.PageVo;
-import com.heo.exam.vo.ResultVO;
-import com.heo.exam.vo.UserInfoVO;
+import com.heo.exam.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,9 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author 刘康
@@ -60,7 +54,7 @@ public class ClassServiceImpl implements ClassService {
     }
 
     @Override
-    public ResultVO getUserListInClass(String userId, String classId) {
+    public ResultVO getClassAndUserList(String userId, String classId) {
         /** 判断班级是否存在 */
         if (!classRepository.existsById(classId)) {
             throw new ExamException(ResultEnum.CLASS_EMPTY);
@@ -68,16 +62,16 @@ public class ClassServiceImpl implements ClassService {
         if (!user2ClassRepository.existsByUserIdAndClassId(userId, classId)) {
             throw new ExamException(ResultEnum.NOT_IN_CLASS);
         }
-
-        List<String> userIdList = user2ClassRepository.findUserIdByClassId(classId);
-        List<User> userList = userRepository.getUsersByIdInOrderByTypeDesc(userIdList);
-        List<UserInfoVO> userInfoVOList = UserInfoVO.getUserInfoVOList(userList);
-        return ResultVOUtil.success(userInfoVOList);
+        Clazz clazz = classRepository.getById(classId);
+        ClassAndUserInfo classAndUserInfo = new ClassAndUserInfo(clazz);
+        classAndUserInfo.setTeacher(userRepository.findAllUserSimpleInfoByClassIdAndUserType(classId, UserTypeEnum.TEACHER.getCode()));
+        classAndUserInfo.setStudent(userRepository.findAllUserSimpleInfoByClassIdAndUserType(classId, UserTypeEnum.STUDENT.getCode()));
+        return ResultVOUtil.success(classAndUserInfo);
     }
 
 
     @Override
-    public ResultVO joinClass(String userId, UserTypeEnum userTypeEnum, String classId) {
+    public ResultVO joinClass(String userId, UserTypeEnum userTypeEnum, String classId, String password) {
         /** 判断班级是否存在 */
         if (!classRepository.existsById(classId)) {
             throw new ExamException(ResultEnum.CLASS_EMPTY);
@@ -86,6 +80,11 @@ public class ClassServiceImpl implements ClassService {
         if (user2ClassRepository.existsByUserIdAndClassId(userId, classId)) {
             throw new ExamException(ResultEnum.REPEAT_THE_CLASS);
         }
+        /** 判断是否密码是否正确 */
+        if (!classRepository.existsByIdAndPassword(classId, password)) {
+            throw new ExamException(ResultEnum.CLASS_PSW_ERROR);
+        }
+
         /** 加入班级 */
         User2Class user2Class = new User2Class(userId, userTypeEnum, classId);
         user2ClassRepository.save(user2Class);
@@ -115,6 +114,9 @@ public class ClassServiceImpl implements ClassService {
     @Override
     @Transactional
     public ResultVO createClass(String userId, ClassInfoForm classInfoForm) {
+        if (classInfoForm.getPassword() == null) {
+            classInfoForm.setPassword("");
+        }
         String name = classInfoForm.getName();
 
         if (classRepository.existsByNameAndCreatorId(name, userId)) {
@@ -148,17 +150,44 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     public ResultVO getAllJoinedClassInfo(String userId, int page, int size) {
-        Page<String> classIdPage = user2ClassRepository.findClassIdByUserId(userId, PageRequest.of(page, size));
+        Page<ClassSimpleInfoVO> classSimpleInfoPage = user2ClassRepository.findJoinClassSimpleInfo(userId, PageRequest.of(page, size));
+        return ResultVOUtil.success(new PageVo<>(classSimpleInfoPage));
+    }
 
-        PageVo pageVo = new PageVo();
-        pageVo.setTotalPages(classIdPage.getTotalPages());
-        pageVo.setTotalData(classIdPage.getTotalElements());
-        List<ClassInfoVO> classInfoVOList = new ArrayList<>();
-        classRepository.findAllByIdIn(classIdPage.getContent()).forEach(clazz -> {
-            classInfoVOList.add(getClassInfoVo(clazz, userId));
-        });
-        pageVo.setData(classInfoVOList);
-        return ResultVOUtil.success(pageVo);
+    @Override
+    @Transactional
+    public ResultVO outUser(String teacherId, String classId, String userId) {
+        /** 判断班级是否存在 */
+        if (!classRepository.existsById(classId)) {
+            throw new ExamException(ResultEnum.CLASS_EMPTY);
+        }
+
+        /** 判断该教师是否是班级的创建人 */
+        if (!classRepository.existsByIdAndCreatorId(classId, teacherId)) {
+            throw new ExamException(ResultEnum.NO_AUTH);
+        }
+
+        /** 判断被删除的人是否还存在 */
+        if (user2ClassRepository.existsByUserIdAndClassId(userId, classId)) {
+            user2ClassRepository.deleteByClassIdAndUserId(classId, userId);
+        }
+        return ResultVOUtil.success();
+    }
+
+    @Override
+    @Transactional
+    public ResultVO disbandClass(String teacherId, String classId) {
+        /** 判断班级是否存在 */
+        if (!classRepository.existsById(classId)) {
+            throw new ExamException(ResultEnum.CLASS_EMPTY);
+        }
+
+        /** 判断该教师是否是班级的创建人 */
+        if (!classRepository.existsByIdAndCreatorId(classId, teacherId)) {
+            throw new ExamException(ResultEnum.NO_AUTH);
+        }
+        classRepository.deleteById(classId);
+        return ResultVOUtil.success();
     }
 
     private ClassInfoVO getClassInfoVo(Clazz clazz, String userId) {
@@ -186,6 +215,8 @@ public class ClassServiceImpl implements ClassService {
         /** 学生人数 */
         Integer studentNumber = user2ClassRepository.countByClassIdAndUserType(classId, UserTypeEnum.STUDENT.getCode());
         classInfoVO.setStudentNumber(studentNumber);
+
+        classInfoVO.setInClass(user2ClassRepository.existsByUserIdAndClassId(userId,classId));
 
         return classInfoVO;
     }

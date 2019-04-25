@@ -1,9 +1,11 @@
 package com.heo.exam.controller;
 
+import com.heo.exam.enums.GradeEnum;
 import com.heo.exam.enums.UserTypeEnum;
 import com.heo.exam.form.ClassInfoForm;
 import com.heo.exam.form.UserInfoForm;
 import com.heo.exam.service.ClassService;
+import com.heo.exam.utils.EnumUtil;
 import com.heo.exam.utils.ResultVOUtil;
 import com.heo.exam.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +78,19 @@ public class TeacherController extends BaseController {
     }
 
     /**
+     * 获取自己加入的所有班级信息
+     *
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping("/class")
+    public ResultVO getAllClass(@RequestParam(required = false, defaultValue = "0") int page,
+                                @RequestParam(required = false, defaultValue = "50") int size) {
+        return classService.getAllJoinedClassInfo(getUserId(), page, size);
+    }
+
+    /**
      * 搜索班级信息
      *
      * @param classId
@@ -93,14 +108,71 @@ public class TeacherController extends BaseController {
      * @return
      */
     @PostMapping("/join/class")
-    public ResultVO joinClass(@RequestParam String classId) {
-        return classService.joinClass(getUserId(), UserTypeEnum.STUDENT, classId);
+    public ResultVO joinClass(@RequestParam String classId, @RequestParam(required = false, defaultValue = "") String password) {
+        return classService.joinClass(getUserId(), UserTypeEnum.TEACHER, classId, password);
     }
 
+    /**
+     * 获取班级信息和成员
+     *
+     * @param classId
+     * @return
+     */
+    @GetMapping("/class/user")
+    public ResultVO getUserListInClass(@RequestParam String classId) {
+        return classService.getClassAndUserList(getUserId(), classId);
+    }
+
+    /**
+     * 踢出班级成员
+     *
+     * @param classId
+     * @param userId
+     * @return
+     */
+    @DeleteMapping("/class/user")
+    public ResultVO outUserInClass(@RequestParam String classId, @RequestParam String userId) {
+        return classService.outUser(getUserId(), classId, userId);
+    }
+
+    /**
+     * 退出班级
+     *
+     * @param classId
+     * @return
+     */
     @DeleteMapping("/exit/class")
-    public ResultVO exitClass(@RequestParam String classId){
+    public ResultVO exitClass(@RequestParam String classId) {
         return classService.quitClass(getUserId(), classId);
     }
 
+    /**
+     * 解散班级
+     *
+     * @param classId
+     * @return
+     */
+    @DeleteMapping("/class")
+    public ResultVO disbandClass(@RequestParam String classId) {
+        return classService.disbandClass(getUserId(), classId);
+    }
+
+    /**
+     * 点赞
+     */
+    @PostMapping("/like")
+    public ResultVO likeUser(@RequestParam String userId) {
+        return userService.like(getUserId(), userId);
+    }
+
+    /**
+     * 获取年级
+     *
+     * @return
+     */
+    @GetMapping("/grade")
+    public ResultVO getGrade() {
+        return ResultVOUtil.success(EnumUtil.getNameList(GradeEnum.class));
+    }
 
 }

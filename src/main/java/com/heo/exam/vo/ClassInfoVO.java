@@ -75,6 +75,9 @@ public class ClassInfoVO {
      */
     private String desc;
 
+    /** 是否在班级里 */
+    private boolean isInClass;
+
     /**
      * 创建日期
      */

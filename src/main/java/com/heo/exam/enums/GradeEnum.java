@@ -9,7 +9,7 @@ import lombok.Getter;
  **/
 public enum GradeEnum implements EnumCommon {
 
-    UNCLASSIFIED(0, ""),
+    UNCLASSIFIED(0, "未填写"),
     FIRST_GRADE(1, "一年级"),
     SECOND_GRADE(2, "二年级"),
     THIRD_GRADE(3, "三年级"),
@@ -26,7 +26,6 @@ public enum GradeEnum implements EnumCommon {
     FOURTEENTH_GRADE(14, "大二"),
     FIFTEENTH_GRADE(15, "大三"),
     SIXTEENTH_GRADE(16, "大四"),
-
     ;
     private Integer code;
     private String name;

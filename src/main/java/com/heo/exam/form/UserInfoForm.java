@@ -3,7 +3,6 @@ package com.heo.exam.form;
 import lombok.Data;
 
 import javax.validation.constraints.Digits;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -31,5 +30,8 @@ public class UserInfoForm {
 
     @Size(max = 20,message = "学号过长")
     private String nid;
+
+    @Size(max = 30,message = "个性签名过长")
+    private String desc = "";
 
 }

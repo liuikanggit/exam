@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.util.Date;
 
 /**
@@ -42,6 +43,9 @@ public class User {
 
     @Column(name = "user_desc")
     private String desc = "";
+
+    @Transient
+    private Integer likedNum;
 
     private Date createTime;
 

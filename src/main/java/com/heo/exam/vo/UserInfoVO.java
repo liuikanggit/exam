@@ -3,6 +3,7 @@ package com.heo.exam.vo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.heo.exam.entity.User;
+import com.heo.exam.enums.SexEnum;
 import com.heo.exam.enums.UserTypeEnum;
 import com.heo.exam.utils.DateSerializer;
 import com.heo.exam.utils.EnumUtil;
@@ -38,6 +39,11 @@ public class UserInfoVO {
      * 职位
      */
     private String job;
+
+    private Integer likedNum;
+
+    /** 今天是否有人给点过赞 */
+    private boolean isLiked;
 
     /**
      * 性别

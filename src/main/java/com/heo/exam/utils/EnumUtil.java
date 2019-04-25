@@ -105,6 +105,5 @@ public class EnumUtil {
 
     public static void main(String[] args) {
         System.out.println(EnumUtil.getNameList(GradeEnum.class));
-        System.out.println(EnumUtil.contains(GradeEnum.class,6));
     }
 }

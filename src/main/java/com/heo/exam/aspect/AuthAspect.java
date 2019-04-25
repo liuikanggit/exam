@@ -63,7 +63,7 @@ public class AuthAspect {
      * 上传图片也要验证token
      */
     @Before("execution(public * com.heo.exam.controller.UploadController.*(..))")
-    public void verifyUpload(){
+    public void verifyUpload() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
         tokenVerify();
@@ -91,6 +91,7 @@ public class AuthAspect {
 
     /**
      * 采集用户的formId
+     *
      * @param request
      */
     private void collectionFormId(HttpServletRequest request) {
@@ -99,7 +100,9 @@ public class AuthAspect {
             String userId = (String) request.getAttribute("userId");
             log.info("formId:{} length:{}", formIdList, formIdList.length);
             for (String formId : formIdList) {
-                   redisService.saveFormId(userId,formId);
+                if (formId.matches("\\w{32}")) {
+                    redisService.saveFormId(userId, formId);
+                }
             }
         }
     }
