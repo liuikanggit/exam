@@ -5,6 +5,7 @@ import com.heo.exam.entity.ExamDetail;
 import com.heo.exam.vo.ExamDetailVO;
 import com.heo.exam.vo.ExamSimpleInfoVO;
 import com.heo.exam.vo.QuestionVO;
+import com.heo.exam.vo.TExamSimpleInfoVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,7 +19,7 @@ import java.util.List;
  * @create 2019-04-08 15:02
  * @desc 考试dao
  **/
-public interface ExamRepository extends CrudRepository<Exam, Integer> {
+public interface ExamRepository extends CrudRepository<Exam, Integer>,ExamExtendRepository {
 
     @Query(value = "select new com.heo.exam.vo.ExamSimpleInfoVO(eb.id,eb.name,eb.desc,eb.subject,eb.time,eb.beginTime,eb.endTime,e.endTime) from Exam e " +
             "left join com.heo.exam.entity.ExamBase eb on eb.id = e.examId " +
@@ -46,6 +47,26 @@ public interface ExamRepository extends CrudRepository<Exam, Integer> {
             "and current_timestamp >= (select eb.endTime from com.heo.exam.entity.ExamBase eb where e.examId = eb.id) ")
     void setExamEnd(String userId);
 
+    @Modifying
+    @Query(value = "update Exam e " +
+            "set e.submitTime = current_timestamp, " +
+            "e.startTime = null " +
+            "where " +
+            "e.submitTime is null " +
+            "and e.startTime is null " +
+            "and current_timestamp >= (select eb.endTime from com.heo.exam.entity.ExamBase eb where e.examId = eb.id) ")
+    void setExamEnd();
+
+    @Modifying
+    @Query(value = "update Exam e " +
+            "set e.submitTime = current_timestamp, " +
+            "e.startTime = null " +
+            "where e.examId = ?1 " +
+            "and e.submitTime is null " +
+            "and e.startTime is null " +
+            "and current_timestamp >= (select eb.endTime from com.heo.exam.entity.ExamBase eb where e.examId = eb.id) ")
+    void setExamEndByExamId(Integer examId);
+
     @Query(value = "select new com.heo.exam.vo.ExamSimpleInfoVO(eb.id,eb.name,eb.desc,eb.subject,e.score,e.startTime,e.submitTime) from Exam e " +
             "left join com.heo.exam.entity.ExamBase eb on eb.id = e.examId " +
             "where e.userId = ?1 and e.submitTime is not null " +
@@ -72,5 +93,8 @@ public interface ExamRepository extends CrudRepository<Exam, Integer> {
     List<Exam> getAllEndExam();
 
     boolean existsByExamIdAndUserId(Integer examId, String userId);
+
+
+    
 
 }

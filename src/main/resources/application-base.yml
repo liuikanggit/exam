@@ -1,8 +1,8 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: 123123
+    username: lk
+    password: lk15131112...mysql_A
     url: jdbc:mysql://203.195.139.64/db_exam_system?characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2b8
     #    url: jdbc:mysql://www.liukang666.cn/db_exam_system?characterEncoding=utf-8&useSSL=false
     hikari:
@@ -46,3 +46,7 @@ spring:
 wechat:
   appId: wx07c2f70bc511f031
   secret: 66c79c9d56271af7c71886812df0d306
+
+template:
+  registerNotice: c3x8r484V9gzlNTxrGMDYw-IFokGNhFWpZFchAsG65k
+  registerPath: /pages/index/main

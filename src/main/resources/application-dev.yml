@@ -5,8 +5,5 @@ upload:
 
 system:
   tempPath: E:\data\exam\system\tempPath
-
-
-backDoorCode: 84V9gzlNTx
 server:
-  port: 8082
+  port: 8882

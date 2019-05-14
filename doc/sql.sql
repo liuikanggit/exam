@@ -3,7 +3,7 @@ CREATE TABLE `user`
   `id`          VARCHAR(32)  NOT NULL COMMENT '用户id' PRIMARY KEY,
   `openid`      VARCHAR(64)  NOT NULL COMMENT 'openid',
   `name`        VARCHAR(32)  NOT NULL DEFAULT '' COMMENT '用户姓名',
-  `username`    VARCHAR(32)  NOT NULL DEFAULT '' COMMENT '登录名',
+  `username`    VARCHAR(32)  NOT NULL DEFAULT '' COMMENT 'D',
   `password`    VARCHAR(16)  NOT NULL DEFAULT '123456' COMMENT '登录密码',
   `avatar`      VARCHAR(256) NOT NULL DEFAULT '' COMMENT '用户头像',
   `type`        TINYINT(1)   NOT NULL COMMENT '用户类型',
@@ -11,8 +11,8 @@ CREATE TABLE `user`
   `nid`         VARCHAR(32)  NOT NULL DEFAULT -1 COMMENT '学号',
   `phone`       VARCHAR(20)  NOT NULL DEFAULT '' COMMENT '联系方式',
   `user_desc`   VARCHAR(512) NOT NULL DEFAULT '' COMMENT '用户个人说明',
-  `create_time` timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `create_time` TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   UNIQUE KEY `openid2type` (`openid`, `type`),
   KEY `type` (`type`)
 ) ENGINE = InnoDB COMMENT '用户表';
@@ -37,8 +37,8 @@ CREATE TABLE `user2class`
   `user_id`     VARCHAR(32) NOT NULL COMMENT '用户id',
   `user_type`   TINYINT(1)  NOT NULL COMMENT '用户类型',
   `class_id`    VARCHAR(32) NOT NULL COMMENT '班级id',
-  `create_time` timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `create_time` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   foreign key (`user_id`) references user (id) on delete cascade on update cascade,
   foreign key (`class_id`) references class (id) on delete cascade on update cascade,
   UNIQUE KEY `user_id2class_id` (`user_id`, `class_id`),
@@ -54,14 +54,14 @@ CREATE TABLE `subject`
   `update_time` timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间'
 ) ENGINE = InnoDB COMMENT '科目';
 
-CREATE TABLE liked
+CREATE TABLE `liked`
 (
-  `id`            int         not null AUTO_INCREMENT PRIMARY KEY COMMENT 'id',
+  `id`            INT         not null AUTO_INCREMENT PRIMARY KEY COMMENT 'id',
   `user_id`       VARCHAR(32) NOT NULL COMMENT '点赞人id',
   `liked_user_id` VARCHAR(32) COMMENT '被点赞人',
   `num`           INT         NOT NULL COMMENT '被点赞的次数',
-  `create_time`   timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time`   timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `create_time`   TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time`   TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   foreign key (`user_id`) references user (`id`) on delete cascade on update cascade,
   foreign key (`liked_user_id`) references user (`id`) on delete cascade on update cascade
 ) COMMENT '点赞表';
@@ -83,9 +83,9 @@ CREATE TABLE `question`
   `answer_image_2` VARCHAR(256) comment '错误答案2图片',
   `answer_3`       VARCHAR(256)          DEFAULT "" COMMENT '错误答案3',
   `answer_image_3` VARCHAR(256) comment '错误答案3图片',
-  `analysis`       varchar(256) comment '题目解析',
-  `create_time`    timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time`    timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `analysis`       VARCHAR(256) comment '题目解析',
+  `create_time`    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time`    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   foreign key (`subject_id`) references subject (id) on delete cascade on update cascade,
   foreign key (`creator_id`) references user (id) on delete cascade on update cascade,
   KEY `subject_id` (`subject_id`),
@@ -102,8 +102,8 @@ CREATE TABLE `paper`
   `name`        VARCHAR(64) NOT NULL COMMENT '试卷名称',
   `score`       int(3)      NOT NULL COMMENT '试卷的总分',
   `pager_desc`  VARCHAR(256) COMMENT '试卷备注信息',
-  `create_time` timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `create_time` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   foreign key (`subject_id`) references subject (id) on delete cascade on update cascade,
   foreign key (`creator_id`) references user (id) on delete cascade on update cascade,
   KEY `subject_id` (`subject_id`),
@@ -129,32 +129,33 @@ CREATE TABLE `exam_base`
   `exam_desc`   VARCHAR(256) COMMENT '考试描述',
   `subject`     VARCHAR(20) COMMENT '科目',
   `creator_id`  VARCHAR(32) NOT NULL COMMENT '创建人',
-  `begin_time`  timestamp   NOT NULL COMMENT '开始时间',
-  `end_time`    timestamp   NOT NULL COMMENT '截止时间',
-  `time`        int         not null COMMENT '考试时长，单位分钟',
-  `create_time` timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `begin_time`  TIMESTAMP   NOT NULL COMMENT '开始时间',
+  `end_time`    TIMESTAMP   NOT NULL COMMENT '截止时间',
+  `time`        INT         not null COMMENT '考试时长，单位分钟',
+  `create_time` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   foreign key (`paper_id`) references paper (id) on delete cascade on update cascade,
   foreign key (`class_id`) references class (id) on delete cascade on update cascade,
   foreign key (`creator_id`) references user (id) on delete cascade on update cascade,
   key `pager_id` (`paper_id`),
   key `class_id` (`class_id`),
   key `creator_id` (`creator_id`)
-) ENGINE = InnoDB COMMENT '考试';
+) ENGINE = InnoDB COMMENT '考试基本信息';
 
 CREATE TABLE `exam`
 (
   `id`          INT           NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '主键',
   `exam_id`     INT           NOT NULL COMMENT '考试id',
   `user_id`     VARCHAR(32)   NOT NULL COMMENT '用户id',
-  `start_time`  timestamp COMMENT '开始考试时间',
-  `submit_time` timestamp COMMENT '提交时间',
+  `start_time`  TIMESTAMP COMMENT '开始考试时间',
+  `submit_time` TIMESTAMP COMMENT '提交时间',
+  `end_time`    TIMESTAMP NULL COMMENT '截止时间',
   `score`       DECIMAL(5, 2) NULL COMMENT '分数',
   foreign key (`exam_id`) references exam_base (id) on delete cascade on update cascade,
   foreign key (`user_id`) references user (id) on delete cascade on update cascade,
   key `exam_id` (`exam_id`),
   key `user_id` (`user_id`)
-) ENGINE = InnoDB COMMENT '考试';
+) ENGINE = InnoDB COMMENT '学生考试';
 
 create table `exam_detail`
 (
@@ -169,4 +170,4 @@ create table `exam_detail`
   key `exam_id` (`exam_id`),
   key `user_id` (`user_id`),
   key `question_id` (`question_id`)
-)
+) ENGINE = InnoDB COMMENT '用户答题详情';

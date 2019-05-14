@@ -38,6 +38,7 @@ public class WechatMessageServiceImpl implements WechatMessageService {
     private boolean sendMessage(String userId, MessageParam messageParam) {
         /** 根据用户的id去获取formId */
         String formId = redisService.getFormId(userId);
+        log.info("formId={}", formId);
         if (formId == null) {
             log.info("信息推送失败,没有formId");
             return false;
@@ -66,7 +67,7 @@ public class WechatMessageServiceImpl implements WechatMessageService {
             log.error("信息推送失败 formId无效,过期，换formId继续", result);
             return sendMessage(userId, messageParam);
         } else {
-            log.error("信息推送失败 其他错误.", result);
+            log.error("信息推送失败 其他错误.{}", result);
         }
         return false;
     }
@@ -74,10 +75,11 @@ public class WechatMessageServiceImpl implements WechatMessageService {
     @Override
     public boolean sendRegisterNotice(String userId, String openid, String name, String userType) {
         MessageParam messageParam = new MessageParam(openid, templateIDConfig.getRegisterNotice(), templateIDConfig.getRegisterPath());
-        messageParam.addData(name).addData(userType)
+        messageParam.addData("注册成功")
+                .addData(name)
+                .addData(userType)
                 .addData("注册后，请尽快完善个人信息")
-                .addData(DateUtil.formatter(new Date(), "yyyy年MM月dd日 hh时mm分"))
-                .addData("恭喜成为HEO云考试的新成员！");
+                .addData(DateUtil.formatter(new Date(), "yyyy-MM-dd"));
         return sendMessage(userId, messageParam);
     }
 

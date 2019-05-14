@@ -7,6 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author 刘康
@@ -37,6 +40,13 @@ public class Subject {
     public Subject(String name,String icon){
         this.name = name;
         this.icon = icon;
+    }
+
+    public Map<String,Object> toMap(){
+        Map<String ,Object> map = new LinkedHashMap<>();
+        map.put("name",this.name);
+        map.put("value",this.id);
+        return map;
     }
 
 }

@@ -18,18 +18,6 @@ public class ErrorController {
 
     @RequestMapping("error-404")
     public String error404(){
-        return "/errorPage/404";
-    }
-    //http://localhost:8080/login?name=user&password=123
-    @GetMapping("/login")
-    public String login(@RequestParam String name,@RequestParam String password, Map map){
-
-        if (name.equals("user") && password.equals("123")){
-            map.put("msg","登录成功");
-            //登录成功
-            return "/success";
-        }else {
-            return "/error";
-        }
+        return "errorPage/404";
     }
 }

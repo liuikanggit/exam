@@ -17,8 +17,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,6 +58,8 @@ public class ExamServiceImpl implements ExamService {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+
 
     @Override
     @Transactional
@@ -113,8 +119,10 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
+    @Transactional
     public ResultVO getExamSimpleInfoByTeacher(String teacherId, Integer page, Integer size) {
-        return null;
+        examRepository.setExamEnd();
+        return ResultVOUtil.success(examRepository.getTExamSimpleInfoVO(teacherId,page,size));
     }
 
     @Override

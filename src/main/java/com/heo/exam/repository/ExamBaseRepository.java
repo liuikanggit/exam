@@ -23,4 +23,6 @@ public interface ExamBaseRepository extends CrudRepository<ExamBase,Integer> {
             "left join com.heo.exam.entity.Paper p on p.id = eb.paperId " +
             "where eb.id = ?1")
     Integer getTotalScoreById(Integer id);
+
+    Integer countByCreatorId(String teacherId);
 }

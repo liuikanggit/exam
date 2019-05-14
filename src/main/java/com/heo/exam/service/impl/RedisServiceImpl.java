@@ -67,7 +67,6 @@ public class RedisServiceImpl implements RedisService {
 
     /**
      * 验证token是否有效 并且 刷新token有效期
-     *
      * @return
      */
     @Override

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
+import java.text.ParseException;
+
 /**
  * @author 刘康
  * @create 2019-01-31 10:50
@@ -38,8 +40,10 @@ public class MyExceptionHandler {
             return ResultVOUtil.error(ResultEnum.METHOD_NOT_SUPPORTED,e.getMessage());
         }
         else if(e instanceof QueryTimeoutException){
-            log.error("redis又超时啦");
+            log.error("redis又超时啦{}",e);
             return ResultVOUtil.error(ResultEnum.QUERY_TIMEOUT,e.getMessage());
+        }else if(e instanceof ParseException){
+            return ResultVOUtil.error(ResultEnum.PARAM_ERROR,e.getMessage());
         }
         else {
             log.error("[系统错误{}]", e);

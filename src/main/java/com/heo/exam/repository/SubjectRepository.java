@@ -20,4 +20,7 @@ public interface SubjectRepository extends CrudRepository<Subject,Integer> {
 
     @Query(value = "select id from Subject where name = ?1")
     Integer getOneIdByName(String name);
+
+    @Query(value = "select s from Subject s")
+    List<Subject> findAll();
 }

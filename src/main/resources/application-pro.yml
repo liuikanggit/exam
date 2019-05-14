@@ -11,5 +11,3 @@ server:
   tomcat:
     basedir: /data/exam/apps/temp
   port: 8080
-backDoorCode:
-
