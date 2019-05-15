@@ -31,17 +31,17 @@ public class ExamRepositoryImpl implements ExamExtendRepository {
         Integer total = ((BigInteger)entityManager.createNativeQuery(sql).getSingleResult()).intValue();
 
         sql = "select eb.id," +
-                "       eb.name, " +
-                "       eb.exam_desc, " +
-                "       eb.subject, " +
-                "       eb.begin_time, " +
-                "       eb.end_time, " +
-                "       eb.time, " +
-                "       IFNULL(e1.num,0), " +
-                "       e1.submit_time, " +
-                "       IFNULL(e2.num,0), " +
-                "       IFNULL(e3.num,0), " +
-                "       IFNULL(e4.num,0)" +
+                "eb.name, " +
+                "eb.exam_desc, " +
+                "eb.subject, " +
+                "eb.begin_time, " +
+                "eb.end_time, " +
+                "eb.time, " +
+                "IFNULL(e1.num,0), " +
+                "e1.submit_time, " +
+                "IFNULL(e2.num,0), " +
+                "IFNULL(e3.num,0), " +
+                "IFNULL(e4.num,0)" +
                 "from exam_base eb " +
                 "left join (select exam_id,count(1) num ,MAX(submit_time) submit_time from exam where submit_time is not null group by exam_id) e1 on e1.exam_id = eb.id " +
                 "left join (select exam_id,count(1) num from exam where start_time is not null and submit_time is null group by exam_id) e2 on e2.exam_id = eb.id " +

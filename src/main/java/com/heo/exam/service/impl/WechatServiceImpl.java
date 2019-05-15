@@ -79,12 +79,12 @@ public class WechatServiceImpl implements WechatService {
             log.info("有新的用户注册成功了,{}", user);
         }
 
-        /** 保存用户formid */
-        saveFormId(userId, formId);
+        /** 保存用户formId */
+        saveFormId(openid, formId);
 
         if (f) {
             /**  推送模板信息 */
-            wechatMessageService.sendRegisterNotice(userId, openid, nickName, EnumUtil.getName(UserTypeEnum.class, type));
+            wechatMessageService.sendRegisterNotice(openid, nickName, EnumUtil.getName(UserTypeEnum.class, type));
         }
 
         String token = redisService.login(userId);

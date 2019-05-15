@@ -42,6 +42,16 @@ public class TeacherController extends BaseController {
     @Autowired
     private SubjectService subjectService;
 
+    /**
+     * 退出登录
+     * @return
+     */
+    @PostMapping("/logout")
+    public ResultVO logout() {
+        redisService.logout(getUserId());
+        return ResultVOUtil.success();
+    }
+
 
     /**
      * 查看自己的资料

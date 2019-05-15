@@ -9,7 +9,7 @@ public interface RedisService{
 
     String login(String userId);
 
-    void logout();
+    void logout(String userId);
 
     boolean verify();
 
@@ -22,10 +22,10 @@ public interface RedisService{
 
     /**
      * 获取formId
-     * @param userId
+     * @param openId
      * @return
      */
-    String getFormId(String userId);
+    String getFormId(String openId);
 
     /**
      * 获取accessToken

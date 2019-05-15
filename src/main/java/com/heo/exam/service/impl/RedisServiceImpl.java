@@ -41,10 +41,10 @@ public class RedisServiceImpl implements RedisService {
         /** 判断用户的token是否已经存在了 */
         String token = redisTemplate.opsForValue().get(userId);
 
-        if (token  == null) {
-            /** 生成token  */
-            token = UUID.randomUUID().toString();
+        if (token != null) {
+            return token;
         }
+        token = UUID.randomUUID().toString();
         // 保存token
         saveToken(userId, token);
         return token;
@@ -54,19 +54,22 @@ public class RedisServiceImpl implements RedisService {
      * 退出登录
      */
     @Override
-    public void logout() {
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
-        String userId = (String) request.getAttribute("userId");
-        String token = request.getHeader(RedisConstant.AUTHORIZATION);
-        /** 移除token */
-        redisTemplate.opsForValue().getOperations().delete(userId);
-        redisTemplate.opsForValue().getOperations().delete(String.format(RedisConstant.TOKEN_PREFIX, token));
+    public void logout(String userId) {
+        if (userId==null){
+            return;
+        }
+        String token = redisTemplate.opsForValue().get(userId);
+        if (token != null) {
+            /** 移除token */
+            redisTemplate.opsForValue().getOperations().delete(userId);
+            redisTemplate.opsForValue().getOperations().delete(String.format(RedisConstant.TOKEN_PREFIX, token));
+        }
     }
 
 
     /**
      * 验证token是否有效 并且 刷新token有效期
+     *
      * @return
      */
     @Override
@@ -88,24 +91,24 @@ public class RedisServiceImpl implements RedisService {
     }
 
     private void saveToken(String userId, String token) {
-//        /** 把用户id  作为key，token作为value */
-//        redisTemplate.opsForValue().set(userId, token, RedisConstant.EXPIRE, TimeUnit.SECONDS);
+        /** 把用户id  作为key，token作为value */
+        redisTemplate.opsForValue().set(userId, token, RedisConstant.EXPIRE, TimeUnit.SECONDS);
 
         /** 再把token_{token}作为key，用户id 作为value */
         redisTemplate.opsForValue().set(String.format(RedisConstant.TOKEN_PREFIX, token), userId, RedisConstant.EXPIRE, TimeUnit.SECONDS);
     }
 
     @Override
-    public void saveFormId(String userId, String formId) {
+    public void saveFormId(String openId, String formId) {
         if (Strings.isNotEmpty(formId)) {
-            /** 把formId_userId为key， fromId为value */
-            redisTemplate.opsForList().leftPush(String.format(RedisConstant.FORM_ID_PREFIX, userId), formId);
+            /** 把formId_openId为key， fromId为value */
+            redisTemplate.opsForList().leftPush(String.format(RedisConstant.FORM_ID_PREFIX, openId), formId);
         }
     }
 
     @Override
-    public String getFormId(String userId) {
-        return redisTemplate.opsForList().rightPop(String.format(RedisConstant.FORM_ID_PREFIX, userId));
+    public String getFormId(String openId) {
+        return redisTemplate.opsForList().rightPop(String.format(RedisConstant.FORM_ID_PREFIX, openId));
     }
 
     private static final String EXPIRES_IN = "expires_in";

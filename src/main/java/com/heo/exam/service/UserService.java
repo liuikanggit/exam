@@ -3,8 +3,6 @@ package com.heo.exam.service;
 import com.heo.exam.form.UserInfoForm;
 import com.heo.exam.vo.ResultVO;
 
-import javax.validation.Valid;
-
 /**
  * @author 刘康
  * @create 2019-01-31 16:51

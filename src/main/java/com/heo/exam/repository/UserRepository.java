@@ -24,6 +24,10 @@ public interface UserRepository extends CrudRepository<User, String> {
     @Query("select id from User where openid = ?1 and type = ?2")
     String getIdByOpenidAndType(String id, Integer type);
 
+    @Query("select openid from User where id = ?1")
+    String getOpenidById(String id);
+
+
     User findByUsernameAndType(String username, Integer type);
 
     @Modifying

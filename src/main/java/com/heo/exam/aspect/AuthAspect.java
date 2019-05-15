@@ -98,10 +98,11 @@ public class AuthAspect {
         String[] formIdList = request.getParameterValues("formId");
         if (!Objects.isNull(formIdList) && formIdList.length > 0 && !formIdList[0].equals("[]")) {
             String userId = (String) request.getAttribute("userId");
+            String openId = userRepository.getOpenidById(userId);
             log.info("formId:{} length:{}", formIdList, formIdList.length);
             for (String formId : formIdList) {
                 if (formId.matches("\\w{32}")) {
-                    redisService.saveFormId(userId, formId);
+                    redisService.saveFormId(openId, formId);
                 }
             }
         }

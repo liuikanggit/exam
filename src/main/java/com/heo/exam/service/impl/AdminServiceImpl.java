@@ -45,7 +45,6 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ResultVO logout() {
-        redisService.logout();
         return ResultVOUtil.success();
     }
 

@@ -5,5 +5,5 @@ package com.heo.exam.service;
  */
 public interface WechatMessageService {
 
-    boolean sendRegisterNotice(String userId, String openid, String name, String userType);
+    boolean sendRegisterNotice(String openid, String name, String userType);
 }

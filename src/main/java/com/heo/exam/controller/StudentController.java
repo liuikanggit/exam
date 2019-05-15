@@ -34,6 +34,16 @@ public class StudentController extends BaseController {
     private ExamService examService;
 
     /**
+     * 退出登录
+     * @return
+     */
+    @PostMapping("/logout")
+    public ResultVO logout() {
+        redisService.logout(getUserId());
+        return ResultVOUtil.success();
+    }
+
+    /**
      * 查看自己的资料
      *
      * @return

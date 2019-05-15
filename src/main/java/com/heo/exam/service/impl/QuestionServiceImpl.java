@@ -23,20 +23,20 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -57,15 +57,15 @@ public class QuestionServiceImpl implements QuestionService {
     private String systemTempPath;
 
     @Override
-    public ResultVO excelInput(String userId,MultipartFile file) {
+    public ResultVO excelInput(String userId, MultipartFile file) {
         String filename = file.getOriginalFilename();
-        Workbook wb = null;
+        Workbook wb;
         try {
             if (ExcelUtil.isExcel2007(filename)) {
                 wb = new XSSFWorkbook(file.getInputStream());
-            } else if (ExcelUtil.isExcel2003(filename)){
+            } else if (ExcelUtil.isExcel2003(filename)) {
                 wb = new HSSFWorkbook(file.getInputStream());
-            } else{
+            } else {
                 throw new ExamException(ResultEnum.FILE_TYPE_ERROR);
             }
         } catch (IOException e) {
@@ -79,24 +79,24 @@ public class QuestionServiceImpl implements QuestionService {
         int success = 0;
         for (int i = 2; i <= sheet.getLastRowNum(); i++) {
             // 从第三行开始 第一行是备注，第二行是表头
-            try{
+            try {
                 Question question = readRowData(sheet.getRow(i));
                 question.setCreatorId(userId);
-                if (!questionRepository.existsQuestionByTitle(question.getTitle())){
+                if (!questionRepository.existsQuestionByTitle(question.getTitle())) {
                     questionRepository.save(question);
-                    success ++;
-                }else{
-                    errorDetailList.add(new ErrorDetail(i,ExcelInputEnum.QUESTION_EXIST));
+                    success++;
+                } else {
+                    errorDetailList.add(new ErrorDetail(i, ExcelInputEnum.QUESTION_EXIST));
                 }
-            } catch (ExcelException e){
-                errorDetailList.add(new ErrorDetail(i,e.getCode(),e.getMessage()));
-            } catch (Exception e){
+            } catch (ExcelException e) {
+                errorDetailList.add(new ErrorDetail(i, e.getCode(), e.getMessage()));
+            } catch (Exception e) {
                 e.printStackTrace();
-                errorDetailList.add(new ErrorDetail(i,ExcelInputEnum.SQL_ERROR));
+                errorDetailList.add(new ErrorDetail(i, ExcelInputEnum.SQL_ERROR));
             }
         }
 
-        batchVO.setCmdNumber(sheet.getLastRowNum()-1);
+        batchVO.setCmdNumber(sheet.getLastRowNum() - 1);
         batchVO.setSuccess(success);
         batchVO.setError(errorDetailList.size());
         batchVO.setErrorDetailList(errorDetailList);
@@ -107,10 +107,10 @@ public class QuestionServiceImpl implements QuestionService {
             e.printStackTrace();
         }
 
-        if (errorDetailList.size() == 0){
+        if (errorDetailList.size() == 0) {
             return ResultVOUtil.success(batchVO);
-        }else {
-            return ResultVOUtil.error(1,"数据导入有错误",batchVO);
+        } else {
+            return ResultVOUtil.error(1, "数据导入有错误", batchVO);
         }
     }
 
@@ -118,57 +118,57 @@ public class QuestionServiceImpl implements QuestionService {
         Question question = new Question();
         /** 读取科目 */
         Cell cell = row.getCell(0);
-        if (cell == null){
+        if (cell == null) {
             throw new ExcelException(ExcelInputEnum.SUBJECT_EMPTY);
         }
         String subjectName = cell.getStringCellValue();
-        if (Strings.isEmpty(subjectName)){
+        if (Strings.isEmpty(subjectName)) {
             throw new ExcelException(ExcelInputEnum.SUBJECT_EMPTY);
         }
         Integer subjectId = subjectRepository.getOneIdByName(subjectName);
-        if (subjectId == -1){
+        if (subjectId == -1) {
             throw new ExcelException(ExcelInputEnum.SUBJECT_NO_EXIST);
         }
         question.setSubjectId(subjectId);
 
         /** 读取年级 */
         cell = row.getCell(1);
-        if (cell == null){
+        if (cell == null) {
             throw new ExcelException(ExcelInputEnum.GRADE_EMPTY);
         }
         String gradeName = cell.getStringCellValue();
-        Integer gradeCode = EnumUtil.getCode(GradeEnum.class,gradeName);
-        if (gradeCode == -1){
+        Integer gradeCode = EnumUtil.getCode(GradeEnum.class, gradeName);
+        if (gradeCode == -1) {
             throw new ExcelException(ExcelInputEnum.GRADE_NO_EXIST);
         }
         question.setGrade(gradeCode);
 
         /** 读取题目类别 */
         cell = row.getCell(2);
-        if (cell == null){
+        if (cell == null) {
             throw new ExcelException(ExcelInputEnum.QUESTION_TYPE_EMPTY);
         }
         String questionTypeName = cell.getStringCellValue();
-        if (Strings.isEmpty(questionTypeName)){
-            throw new ExcelException( ExcelInputEnum.QUESTION_TYPE_EMPTY);
+        if (Strings.isEmpty(questionTypeName)) {
+            throw new ExcelException(ExcelInputEnum.QUESTION_TYPE_EMPTY);
         }
-        Integer questionTypeCode = EnumUtil.getCode(QuestionTypeEnum.class,questionTypeName);
-        if (questionTypeCode == -1){
-            throw new ExcelException( ExcelInputEnum.QUESTION_TYPE_NO_EXIST);
+        Integer questionTypeCode = EnumUtil.getCode(QuestionTypeEnum.class, questionTypeName);
+        if (questionTypeCode == -1) {
+            throw new ExcelException(ExcelInputEnum.QUESTION_TYPE_NO_EXIST);
         }
         question.setType(questionTypeCode);
 
         /** 题目标题 */
         cell = row.getCell(3);
         String title = cell.getStringCellValue();
-        if (Strings.isEmpty(title)){
-            throw new ExcelException( ExcelInputEnum.TITLE_EMPTY);
+        if (Strings.isEmpty(title)) {
+            throw new ExcelException(ExcelInputEnum.TITLE_EMPTY);
         }
         question.setTitle(title);
 
         /** 题目标题图片url  */
         cell = row.getCell(4);
-        if (cell != null){
+        if (cell != null) {
             String titleImage = cell.getStringCellValue();
             question.setTitle(titleImage);
         }
@@ -176,24 +176,24 @@ public class QuestionServiceImpl implements QuestionService {
 
         /** 答案 */
         cell = row.getCell(5);
-        if (cell == null){
+        if (cell == null) {
             throw new ExcelException(ExcelInputEnum.ANSWER_EMPTY);
         }
         String answer0 = cell.getStringCellValue();
-        if (Strings.isEmpty(answer0)){
-            throw new ExcelException( ExcelInputEnum.ANSWER_EMPTY);
+        if (Strings.isEmpty(answer0)) {
+            throw new ExcelException(ExcelInputEnum.ANSWER_EMPTY);
         }
         question.setAnswer0(answer0);
 
         /** 答案图片 */
         cell = row.getCell(6);
-        if (cell!= null){
+        if (cell != null) {
             String answerImage0 = cell.getStringCellValue();
             question.setAnswerImage0(answerImage0);
         }
 
 
-        if (questionTypeCode.equals(QuestionTypeEnum.CHOICE_QUESTION) || questionTypeCode.equals(QuestionTypeEnum.JUDGE_QUESTION)){
+        if (questionTypeCode.equals(QuestionTypeEnum.CHOICE_QUESTION) || questionTypeCode.equals(QuestionTypeEnum.JUDGE_QUESTION)) {
             /** 错误答案1 */
             cell = row.getCell(7);
             String answer1 = cell.getStringCellValue();
@@ -201,12 +201,12 @@ public class QuestionServiceImpl implements QuestionService {
 
             /** 错误答案1图片 */
             cell = row.getCell(8);
-            if (cell!= null) {
+            if (cell != null) {
                 String answerImage1 = cell.getStringCellValue();
                 question.setAnswerImage1(answerImage1);
             }
 
-            if (questionTypeCode.equals(QuestionTypeEnum.CHOICE_QUESTION)){
+            if (questionTypeCode.equals(QuestionTypeEnum.CHOICE_QUESTION)) {
                 /** 错误答案2 */
                 cell = row.getCell(9);
                 String answer2 = cell.getStringCellValue();
@@ -214,7 +214,7 @@ public class QuestionServiceImpl implements QuestionService {
 
                 /** 错误答案2图片 */
                 cell = row.getCell(10);
-                if (cell!= null) {
+                if (cell != null) {
                     String answerImage2 = cell.getStringCellValue();
                     question.setAnswerImage2(answerImage2);
                 }
@@ -226,7 +226,7 @@ public class QuestionServiceImpl implements QuestionService {
 
                 /** 错误答案3图片 */
                 cell = row.getCell(12);
-                if (cell!= null) {
+                if (cell != null) {
                     String answerImage3 = cell.getStringCellValue();
                     question.setAnswerImage3(answerImage3);
                 }
@@ -234,7 +234,7 @@ public class QuestionServiceImpl implements QuestionService {
         }
 
         cell = row.getCell(13);
-        if (cell!= null) {
+        if (cell != null) {
             String analysis = cell.getStringCellValue();
             question.setAnalysis(analysis);
         }
@@ -246,14 +246,14 @@ public class QuestionServiceImpl implements QuestionService {
     public synchronized File getExcelTemplate() {
         try {
             ClassPathResource resource = new ClassPathResource("input.xlsx");
-            Path path = Paths.get(systemTempPath,"input.xlsx");
+            Path path = Paths.get(systemTempPath, "input.xlsx");
 
-            if (!Files.deleteIfExists(path)){
+            if (!Files.deleteIfExists(path)) {
                 Files.createDirectories(path);
                 Set<PosixFilePermission> permissionSet = new HashSet<>();
                 permissionSet.add(PosixFilePermission.GROUP_WRITE);
                 permissionSet.add(PosixFilePermission.OWNER_EXECUTE);
-                Files.setPosixFilePermissions(path,permissionSet);
+                Files.setPosixFilePermissions(path, permissionSet);
             }
 
             Workbook wb = new XSSFWorkbook(resource.getInputStream());
@@ -261,16 +261,16 @@ public class QuestionServiceImpl implements QuestionService {
             String password = UUID.randomUUID().toString();
             /** 第二个sheet，放科目*/
             Sheet sheet = wb.getSheetAt(1);
-            setRowData(sheet.createRow(0),subjectRepository.findAllName());
+            setRowData(sheet.createRow(0), subjectRepository.findAllName());
             sheet.protectSheet(password);
             /** 第三个sheet，放年级 */
             sheet = wb.getSheetAt(2);
-            setRowData(sheet.createRow(0),EnumUtil.getNameList(GradeEnum.class));
+            setRowData(sheet.createRow(0), EnumUtil.getNameList(GradeEnum.class));
             sheet.protectSheet(password);
             /** 第四sheet，放题目类别 */
             sheet = wb.getSheetAt(3);
             sheet.protectSheet(password);
-            setRowData(sheet.createRow(0),EnumUtil.getNameList(QuestionTypeEnum.class));
+            setRowData(sheet.createRow(0), EnumUtil.getNameList(QuestionTypeEnum.class));
 
             wb.write(new FileOutputStream(path.toFile()));
             wb.close();
@@ -283,7 +283,7 @@ public class QuestionServiceImpl implements QuestionService {
         throw new ExamException(ResultEnum.FILE_NULL);
     }
 
-    private void setRowData(Row row, List<String> valueList){
+    private void setRowData(Row row, List<String> valueList) {
         if (valueList != null) {
             for (int i = 0; i < valueList.size(); i++) {
                 Cell cell = row.createCell(i);

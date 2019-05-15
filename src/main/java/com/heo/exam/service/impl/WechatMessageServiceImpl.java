@@ -35,9 +35,9 @@ public class WechatMessageServiceImpl implements WechatMessageService {
     private static final Type MAP_TYPE = new TypeToken<Map<String, String>>() {
     }.getType();
 
-    private boolean sendMessage(String userId, MessageParam messageParam) {
+    private boolean sendMessage(String openId, MessageParam messageParam) {
         /** 根据用户的id去获取formId */
-        String formId = redisService.getFormId(userId);
+        String formId = redisService.getFormId(openId);
         log.info("formId={}", formId);
         if (formId == null) {
             log.info("信息推送失败,没有formId");
@@ -65,7 +65,7 @@ public class WechatMessageServiceImpl implements WechatMessageService {
             return true;
         } else if (errCode == 41028 || errCode == 41029) {
             log.error("信息推送失败 formId无效,过期，换formId继续", result);
-            return sendMessage(userId, messageParam);
+            return sendMessage(openId, messageParam);
         } else {
             log.error("信息推送失败 其他错误.{}", result);
         }
@@ -73,14 +73,14 @@ public class WechatMessageServiceImpl implements WechatMessageService {
     }
 
     @Override
-    public boolean sendRegisterNotice(String userId, String openid, String name, String userType) {
+    public boolean sendRegisterNotice(String openid, String name, String userType) {
         MessageParam messageParam = new MessageParam(openid, templateIDConfig.getRegisterNotice(), templateIDConfig.getRegisterPath());
         messageParam.addData("注册成功")
                 .addData(name)
                 .addData(userType)
                 .addData("注册后，请尽快完善个人信息")
                 .addData(DateUtil.formatter(new Date(), "yyyy-MM-dd"));
-        return sendMessage(userId, messageParam);
+        return sendMessage(openid, messageParam);
     }
 
 }

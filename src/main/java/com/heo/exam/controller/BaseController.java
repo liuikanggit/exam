@@ -4,7 +4,10 @@ import com.heo.exam.enums.ResultEnum;
 import com.heo.exam.exception.ExamException;
 import com.heo.exam.service.RedisService;
 import com.heo.exam.service.UserService;
+import com.heo.exam.utils.ResultVOUtil;
+import com.heo.exam.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -25,11 +28,12 @@ public class BaseController {
 
     protected String getUserId() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (attributes==null){
+        if (attributes == null) {
             throw new ExamException(ResultEnum.SYSTEM_EXCEPTION);
         }
         HttpServletRequest request = attributes.getRequest();
         return (String) request.getAttribute("userId");
     }
+
 
 }
