@@ -60,6 +60,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultVO like(String userId, String likedUserId) {
+        if(!userRepository.existsById(likedUserId)){
+            throw new ExamException(ResultEnum.STUDENT_EMPTY);
+        }
 
         Liked liked = likedRepository.findTodayUserSupport(userId, likedUserId);
         if (liked == null) {
