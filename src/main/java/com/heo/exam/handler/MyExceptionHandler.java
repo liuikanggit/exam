@@ -4,6 +4,7 @@ import com.heo.exam.enums.ResultEnum;
 import com.heo.exam.exception.ExamException;
 import com.heo.exam.utils.ResultVOUtil;
 import com.heo.exam.vo.ResultVO;
+import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.QueryTimeoutException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -41,13 +42,20 @@ public class MyExceptionHandler {
         }
         else if(e instanceof QueryTimeoutException){
             log.error("redis又超时啦{}",e);
-            return ResultVOUtil.error(ResultEnum.QUERY_TIMEOUT,e.getMessage());
-        }else if(e instanceof ParseException){
+//            return ResultVOUtil.error(ResultEnum.QUERY_TIMEOUT,e.getMessage());
+            return ResultVOUtil.error(ResultEnum.NETWORK_ERROR,e.getMessage());
+        }
+        else if(e instanceof RedisException){
+            log.error("redis又出问题了",e);
+            return ResultVOUtil.error(ResultEnum.NETWORK_ERROR,e.getMessage());
+        }
+        else if(e instanceof ParseException){
             return ResultVOUtil.error(ResultEnum.PARAM_ERROR,e.getMessage());
         }
         else {
             log.error("[系统错误{}]", e);
-            return ResultVOUtil.error(-1, "未知错误");
+//            return ResultVOUtil.error(-1, "未知错误");
+            return ResultVOUtil.error(ResultEnum.NETWORK_ERROR,"其实是未知错误");
         }
     }
 }

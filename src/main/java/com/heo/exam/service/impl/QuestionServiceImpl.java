@@ -301,7 +301,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public ResultVO getAllQuestion() {
-        return ResultVOUtil.success(questionRepository.findAll());
+        return ResultVOUtil.success(questionRepository.findAllQuestionSimpleVO());
     }
 
 

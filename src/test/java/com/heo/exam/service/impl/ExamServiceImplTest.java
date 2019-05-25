@@ -1,9 +1,7 @@
 package com.heo.exam.service.impl;
 
 import com.heo.exam.entity.ExamDetail;
-import com.heo.exam.entity.Paper;
 import com.heo.exam.service.ExamService;
-import com.heo.exam.utils.DateUtil;
 import com.heo.exam.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
@@ -11,13 +9,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.transaction.Transactional;
-import java.util.*;
-
-import static org.junit.Assert.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -28,11 +24,10 @@ public class ExamServiceImplTest {
     private ExamService examService;
 
     @Test
-    @Transactional
     public void createExam() {
-        String teacherId = "1553136628437305747";
+        String teacherId = "1557924271452771376";
         Integer paperId = 4;
-        String[] classIds = new String[]{"123456"};
+        String[] classIds = new String[]{"000000"};
         String name = "第二次数学月考";
         String desc = "主要为了考察同学们最近的学习情况，同学们要加油哦..";
         Integer time = 120;
@@ -61,7 +56,7 @@ public class ExamServiceImplTest {
 
     @Test
     public void getExamSimpleInfoByStudent() {
-        ResultVO<PageVo<ExamSimpleInfoVO>> resultVO = examService.getExamSimpleInfoByStudent("1553578680507837713", 0, 5);
+        ResultVO<PageVo<ExamSimpleInfoVO>> resultVO = examService.getExamSimpleInfoByStudent("1557924224270246686", 0, 5);
         Assert.assertEquals(resultVO.getCode(),new Integer(0));
         log.info("{}",resultVO.getData());
     }
