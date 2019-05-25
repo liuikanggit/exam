@@ -11,7 +11,7 @@ public enum  QuestionTypeEnum implements EnumCommon {
 
     CHOICE_QUESTION(0,"选择题"),
     JUDGE_QUESTION(1,"判断题"),
-    VACANCY_QUESTION(2,"填空题"),
+//    VACANCY_QUESTION(2,"填空题"),
     ;
 
     private Integer code;

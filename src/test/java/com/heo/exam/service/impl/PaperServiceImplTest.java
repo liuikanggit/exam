@@ -25,20 +25,20 @@ public class PaperServiceImplTest {
     @Test
     public void getAllPager() {
         ResultVO<PageVo<PaperSimpleVO>> resultVO = paperService.getAllPaper(null, null,null,0,5);
+        log.info("{}",resultVO.getData().getData());
         Assert.assertNotNull(resultVO.getData());
         Assert.assertNotEquals(resultVO.getData().getTotalData(),0);
         resultVO = paperService.getAllPaper("1", null,null,0,5);
         Assert.assertEquals(resultVO.getData().getTotalPages(),0);
-        resultVO = paperService.getAllPaper(null,  49,null,0,5);
+        resultVO = paperService.getAllPaper(null,  1,null,0,5);
         Assert.assertEquals(resultVO.getData().getTotalPages(),1);
     }
 
     @Test
+    @Transactional
     public void savePager() {
-        ResultVO resultVO = paperService.savePaper(3, "1552562802448169525", 48, 10,"测试试卷", 100, "测试", new Integer[]{1,2,3});
-        log.info("{}",resultVO.getCode());
-        log.info("{}",resultVO.getMsg());
-        log.info("{}",resultVO.getData());
+        ResultVO resultVO = paperService.savePaper(null, "1557924271452771376", 1, 10,"测试试卷", 100, "测试", new Integer[]{1,2});
+        Assert.assertTrue(resultVO.getCode() == 0);
     }
 
     @Test

@@ -31,7 +31,7 @@ public class PaperSimpleVO {
         this.id = id;
         this.name = name;
         this.creator = creator;
-        this.subject = subject;
+        this.subject = subject.substring(0,1);
         this.score = score;
         this.desc = desc;
         this.createTime = DateUtil.formatter(createTime,"yyyy-MM-dd");

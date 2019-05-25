@@ -283,6 +283,28 @@ public class QuestionServiceImpl implements QuestionService {
         throw new ExamException(ResultEnum.FILE_NULL);
     }
 
+    @Override
+    public ResultVO inputChoiceQuestion(Integer subjectId, String creatorId, int grade, String title, String answer0, String answer1, String answer2, String answer3, String analysis) {
+        Question question = new Question(subjectId, creatorId, grade, title, answer0, answer1, answer2, answer3, analysis);
+        questionRepository.save(question);
+
+
+        return ResultVOUtil.success();
+    }
+
+    @Override
+    public ResultVO inputJudgementQuestion(Integer subjectId, String creatorId, int grade, String title, boolean answer, String analysis) {
+        Question question = new Question(subjectId, creatorId, grade, title, answer, analysis);
+        questionRepository.save(question);
+        return ResultVOUtil.success();
+    }
+
+    @Override
+    public ResultVO getAllQuestion() {
+        return ResultVOUtil.success(questionRepository.findAll());
+    }
+
+
     private void setRowData(Row row, List<String> valueList) {
         if (valueList != null) {
             for (int i = 0; i < valueList.size(); i++) {

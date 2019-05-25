@@ -35,6 +35,8 @@ public enum ResultEnum {
     EXAM_NOT_START(704,"考试未开始"),
     EXAM_IS_END(704,"考试以截止"),
 
+    QUESTION_NOT_EXIST(801,"题目不能为空"),
+
     SYSTEM_EXCEPTION(-1, "系统异常"),
     REQUEST_EXCEPTION(-2, "请求异常"),
     NO_AUTH(-3, "无权限操作"),

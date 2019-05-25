@@ -3,6 +3,7 @@ package com.heo.exam.config;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.unit.DataSize;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -20,8 +21,8 @@ public class Config {
     @Bean
     public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory config = new MultipartConfigFactory();
-        config.setMaxFileSize("3MB");
-        config.setMaxRequestSize("15MB");
+        config.setMaxFileSize(DataSize.parse("3MB"));
+        config.setMaxRequestSize(DataSize.parse("15MB"));
         return config.createMultipartConfig();
     }
 

@@ -4,11 +4,7 @@ import com.heo.exam.enums.GradeEnum;
 import com.heo.exam.enums.UserTypeEnum;
 import com.heo.exam.form.ClassInfoForm;
 import com.heo.exam.form.UserInfoForm;
-import com.heo.exam.service.ClassService;
-import com.heo.exam.service.ExamService;
-import com.heo.exam.service.PaperService;
-import com.heo.exam.service.SubjectService;
-import com.heo.exam.utils.DateUtil;
+import com.heo.exam.service.*;
 import com.heo.exam.utils.EnumUtil;
 import com.heo.exam.utils.ResultVOUtil;
 import com.heo.exam.vo.ResultVO;
@@ -16,11 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.validation.Valid;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 /**
  * @author 刘康
@@ -41,9 +35,12 @@ public class TeacherController extends BaseController {
 
     @Autowired
     private SubjectService subjectService;
+    @Autowired
+    private QuestionService questionService;
 
     /**
      * 退出登录
+     *
      * @return
      */
     @PostMapping("/logout")
@@ -230,13 +227,14 @@ public class TeacherController extends BaseController {
 
     /**
      * 获取考试列表（分页）
+     *
      * @param page 页数
      * @param size 数量
      * @return
      */
     @GetMapping("/exam")
-    public ResultVO getExam(@RequestParam Integer page,@RequestParam Integer size){
-        return examService.getExamSimpleInfoByTeacher(getUserId(),page,size);
+    public ResultVO getExam(@RequestParam Integer page, @RequestParam Integer size) {
+        return examService.getExamSimpleInfoByTeacher(getUserId(), page, size);
     }
 
     /**
@@ -262,11 +260,12 @@ public class TeacherController extends BaseController {
 
     /**
      * 获取试卷（分页）
-     * @param self 是否查看自己创建的
+     *
+     * @param self    是否查看自己创建的
      * @param subject 科目分类
-     * @param grade 年级分类
-     * @param page 页数
-     * @param size 数量
+     * @param grade   年级分类
+     * @param page    页数
+     * @param size    数量
      * @return
      */
     @GetMapping("/paper")
@@ -282,7 +281,6 @@ public class TeacherController extends BaseController {
     }
 
 
-
     /**
      * 获取科目
      */
@@ -290,5 +288,11 @@ public class TeacherController extends BaseController {
     public ResultVO getSubject() {
         return subjectService.getAllSubject();
     }
+
+    @GetMapping("/question")
+    public ResultVO getQuestion() {
+        return questionService.getAllQuestion();
+    }
+
 
 }

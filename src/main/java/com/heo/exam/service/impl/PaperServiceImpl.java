@@ -52,6 +52,10 @@ public class PaperServiceImpl implements PaperService {
             paperRepository.deleteById(paperId);
         }
 
+        if (questions==null || questions.length == 0){
+            throw new ExamException(ResultEnum.QUESTION_NOT_EXIST);
+        }
+
         /** 1 验证科目是否合法 */
         if ( ! subjectRepository.existsById(subjectId)) {
             throw new ExamException(ResultEnum.SUBJECT_NOT_EXIST);

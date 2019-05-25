@@ -1,5 +1,6 @@
 package com.heo.exam.service.impl;
 
+import com.heo.exam.ExamApplicationTests;
 import com.heo.exam.service.WechatService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,9 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
 
-@SpringBootTest
-@RunWith(SpringRunner.class)
-public class WechatServiceImplTest {
+public class WechatServiceImplTest extends ExamApplicationTests {
 
     @Autowired
     private WechatService wechatService;

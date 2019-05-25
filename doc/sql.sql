@@ -90,6 +90,7 @@ CREATE TABLE `question`
   foreign key (`creator_id`) references user (id) on delete cascade on update cascade,
   KEY `subject_id` (`subject_id`),
   KEY `create_id` (`creator_id`),
+  unique('title'),
   FULLTEXT (`title`)
 ) ENGINE = InnoDB COMMENT '题目';
 
@@ -101,7 +102,7 @@ CREATE TABLE `paper`
   `grade_code`  INT         NOT NULL COMMENT '年级',
   `name`        VARCHAR(64) NOT NULL COMMENT '试卷名称',
   `score`       int(3)      NOT NULL COMMENT '试卷的总分',
-  `pager_desc`  VARCHAR(256) COMMENT '试卷备注信息',
+  `paper_desc`  VARCHAR(256) COMMENT '试卷备注信息',
   `create_time` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   foreign key (`subject_id`) references subject (id) on delete cascade on update cascade,
@@ -110,7 +111,7 @@ CREATE TABLE `paper`
   KEY `create_id` (`creator_id`)
 ) ENGINE = InnoDB COMMENT '试卷';
 
-CREATE TABLE `pager2question`
+CREATE TABLE `paper2question`
 (
   `id`          INT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '主键',
   `paper_id`    INT NOT NULL COMMENT '试卷id',
