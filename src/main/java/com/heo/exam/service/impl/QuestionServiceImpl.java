@@ -16,12 +16,10 @@ import com.heo.exam.utils.ResultVOUtil;
 import com.heo.exam.vo.BatchVO;
 import com.heo.exam.vo.ErrorDetail;
 import com.heo.exam.vo.ResultVO;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,10 +27,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,6 +40,7 @@ import java.util.*;
  * @desc 题目项目业务逻辑的实现
  **/
 @Service
+@Slf4j
 public class QuestionServiceImpl implements QuestionService {
 
     @Autowired
@@ -108,8 +104,10 @@ public class QuestionServiceImpl implements QuestionService {
         }
 
         if (errorDetailList.size() == 0) {
+            log.info("数据导入成功：{}", batchVO);
             return ResultVOUtil.success(batchVO);
         } else {
+            log.info("数据导入有错误：{}", batchVO);
             return ResultVOUtil.error(1, "数据导入有错误", batchVO);
         }
     }
@@ -179,6 +177,7 @@ public class QuestionServiceImpl implements QuestionService {
         if (cell == null) {
             throw new ExcelException(ExcelInputEnum.ANSWER_EMPTY);
         }
+        cell.setCellType(CellType.STRING);
         String answer0 = cell.getStringCellValue();
         if (Strings.isEmpty(answer0)) {
             throw new ExcelException(ExcelInputEnum.ANSWER_EMPTY);
@@ -196,6 +195,7 @@ public class QuestionServiceImpl implements QuestionService {
         if (questionTypeCode.equals(QuestionTypeEnum.CHOICE_QUESTION) || questionTypeCode.equals(QuestionTypeEnum.JUDGE_QUESTION)) {
             /** 错误答案1 */
             cell = row.getCell(7);
+            cell.setCellType(CellType.STRING);
             String answer1 = cell.getStringCellValue();
             question.setAnswer1(answer1);
 
@@ -209,6 +209,7 @@ public class QuestionServiceImpl implements QuestionService {
             if (questionTypeCode.equals(QuestionTypeEnum.CHOICE_QUESTION)) {
                 /** 错误答案2 */
                 cell = row.getCell(9);
+                cell.setCellType(CellType.STRING);
                 String answer2 = cell.getStringCellValue();
                 question.setAnswer2(answer2);
 
@@ -221,6 +222,7 @@ public class QuestionServiceImpl implements QuestionService {
 
                 /** 错误答案3 */
                 cell = row.getCell(11);
+                cell.setCellType(CellType.STRING);
                 String answer3 = cell.getStringCellValue();
                 question.setAnswer2(answer3);
 
@@ -246,8 +248,8 @@ public class QuestionServiceImpl implements QuestionService {
     public synchronized File getExcelTemplate() {
         try {
             ClassPathResource resource = new ClassPathResource("input.xlsx");
-            Path path = Paths.get(systemTempPath, "input.xlsx");
 
+            Path path = Paths.get(systemTempPath, "input.xlsx");
             if (!Files.deleteIfExists(path)) {
                 Files.createDirectories(path);
                 Set<PosixFilePermission> permissionSet = new HashSet<>();
@@ -256,7 +258,8 @@ public class QuestionServiceImpl implements QuestionService {
                 Files.setPosixFilePermissions(path, permissionSet);
             }
 
-            Workbook wb = new XSSFWorkbook(resource.getInputStream());
+            InputStream inputStream = resource.getInputStream();
+            Workbook wb = new XSSFWorkbook(inputStream);
 
             String password = UUID.randomUUID().toString();
             /** 第二个sheet，放科目*/
@@ -272,8 +275,11 @@ public class QuestionServiceImpl implements QuestionService {
             sheet.protectSheet(password);
             setRowData(sheet.createRow(0), EnumUtil.getNameList(QuestionTypeEnum.class));
 
-            wb.write(new FileOutputStream(path.toFile()));
+            FileOutputStream fileOutputStream = new FileOutputStream(path.toFile());
+            wb.write(fileOutputStream);
             wb.close();
+            fileOutputStream.close();
+            inputStream.close();
             return path.toFile();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -287,8 +293,6 @@ public class QuestionServiceImpl implements QuestionService {
     public ResultVO inputChoiceQuestion(Integer subjectId, String creatorId, int grade, String title, String answer0, String answer1, String answer2, String answer3, String analysis) {
         Question question = new Question(subjectId, creatorId, grade, title, answer0, answer1, answer2, answer3, analysis);
         questionRepository.save(question);
-
-
         return ResultVOUtil.success();
     }
 

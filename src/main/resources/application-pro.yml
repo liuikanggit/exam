@@ -11,3 +11,9 @@ server:
   tomcat:
     basedir: /data/exam/apps/temp
   port: 8080
+
+spring:
+  datasource:
+    username: lk
+    password: lk15131112...mysql_A
+    url: jdbc:mysql://localhost/db_exam_system?characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2b8

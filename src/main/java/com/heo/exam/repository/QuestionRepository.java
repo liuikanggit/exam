@@ -19,6 +19,7 @@ public interface QuestionRepository extends CrudRepository<Question,Integer> {
 
     boolean existsByIdAndAnswer0(Integer question,String answer);
 
+
     List<Question> findAll();
 
     @Query(value = "select new com.heo.exam.vo.QuestionSimpleVO(q.id,q.title,q.type,s.name,q.grade,u.name,q.createTime)" +

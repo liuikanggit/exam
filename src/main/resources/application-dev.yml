@@ -7,3 +7,9 @@ system:
   tempPath: E:\data\exam\system\tempPath
 server:
   port: 8882
+
+spring:
+  datasource:
+    username: yw
+    password: lk15131112...mysql_A
+    url: jdbc:mysql://203.195.139.64/db_exam_system?characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2b8
